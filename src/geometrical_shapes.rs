@@ -1,4 +1,6 @@
 use raster::{Color, Image};
+use rand::Rng;
+
 //Traits: 
 pub trait Drawable {
     fn draw(&self, image:&mut Image);
@@ -31,6 +33,15 @@ impl Point {
         Point {
             x,
             y
+        }
+    }
+    pub fn random(width: i32, height: i32) -> Point {
+        let mut rng = rand::thread_rng();
+        let x = rng.gen_range(0..width);
+        let y = rng.gen_range(0..height);
+        Point {
+            x,
+            y,
         }
     }
 }
@@ -175,5 +186,50 @@ impl Drawable for Rectangle {
     }
     fn color(&self) -> Color {
         Color::rgb(123, 0, 0)
+    }
+}
+
+//------------//
+
+
+//Shape Cercle
+pub struct Cercle {
+    pub center: &Point,
+    pub radius: i32,
+}
+//Inst Cercle
+impl Cercle {
+    pub fn new(c: &Point, r: i32) -> Cercle {
+        Cercle {
+            center: c, 
+            point2: r,
+        }
+    }
+}
+//Draw Cercle
+impl Drawable for Cercle {
+    fn draw(&self, image: &mut Image) {
+    let xc = self.center.x;
+    let yc = self.center.y;
+    let r = self.radius;
+
+    let min_x = xc - r;
+    let max_x = xc + r;
+    let min_y = yc - r;
+    let max_y = yc + r;
+
+        for x in min_x..=max_x {
+            for y in min_y..=max_y {
+                let dx = x - xc;
+                let dy = y - yc;
+
+                if dx * dx + dy * dy == r * r {
+                    image.display(x, y, self.color());
+                }
+            }
+        }
+    }
+    fn color(&self) -> Color {
+        Color::rgb(243, 66, 110)
     }
 }
