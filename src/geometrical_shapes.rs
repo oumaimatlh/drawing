@@ -26,7 +26,6 @@ pub struct Point {
     pub x: i32, //coordonnée horizontal 
     pub y: i32, //coordonnée vertical 
 }
-
 impl Point {
     pub fn new(x:i32, y:i32) -> Point {
         Point {
@@ -35,7 +34,6 @@ impl Point {
         }
     }
 }
-
 //Draw Point : 
 impl Drawable for Point {
     fn draw(&self, image:&mut Image) {
@@ -45,6 +43,7 @@ impl Drawable for Point {
         Color::rgb(255, 192, 203)
     }
 }
+
 //--------------------//
 
 //Shape Line: 
@@ -52,7 +51,6 @@ pub struct Line {
     pub point1: &Point,
     pub point2: &Point,
 }
-
 //Insrance Line
 impl Line {
     pub fn new(p1: &Point, p2: &Point) -> Line {
@@ -104,7 +102,10 @@ impl Drawable for Line {
     }
 }
 
+
+
 //---------------//
+
 //Shape Triangle
 pub struct Triangle {
     pub point1: &Point,
@@ -127,7 +128,7 @@ impl Drawable for Triangle {
         let line1 = Line::new(self.point1, self.point2);
         let line2 = Line::new(self.point2, self.point3);
         let line3 = Line::new(self.point3, self.point1);
-
+        
         line1.draw(image);
         line2.draw(image);
         line3.draw(image);
@@ -139,3 +140,40 @@ impl Drawable for Triangle {
 
 //-----------------------//
 
+//Shape Rectangle
+pub struct Rectangle {
+    pub point1: &Point,
+    pub point2: &Point,
+}
+//Inst Rectangle
+impl Rectangle {
+    pub fn new(p1: &Point, p2: &Point) -> Rectangle {
+        Rectangle {
+            point1: p1, 
+            point2: p2,
+        }
+    }
+}
+//Draw Rectangle
+impl Drawable for Rectangle {
+    fn draw(&self, image: &mut Image) {
+        let min_x = self.point1.x.min(self.point2.x);
+        let max_x = self.point1.x.max(self.point2.x);
+
+        let min_y = self.point1.y.min(self.point2.y);
+        let max_y = self.point1.y.max(self.point2.y);
+
+        let p1 = Point::new(min_x, min_y);
+        let p2 = Point::new(max_x, min_y);
+        let p3 = Point::new(max_x, max_y);
+        let p4 = Point::new(min_x, max_y);
+
+        Line::new(&p1, &p2).draw(image);
+        Line::new(&p2, &p3).draw(image);
+        Line::new(&p3, &p4).draw(image);
+        Line::new(&p4, &p1).draw(image);
+    }
+    fn color(&self) -> Color {
+        Color::rgb(123, 0, 0)
+    }
+}
