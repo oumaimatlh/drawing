@@ -45,6 +45,7 @@ impl Drawable for Point {
         Color::rgb(255, 192, 203)
     }
 }
+//--------------------//
 
 //Shape Line: 
 pub struct Line {
@@ -63,21 +64,41 @@ impl Line {
 //Draw Line:
 impl Drawable for Line {
     fn draw(&self, image:&mut Image) {
-        let x  = self.point1.x;
-        let x1 = self.point2.x; 
-        let y  = self.point1.y;
-        let y1 = self.point2.y; 
+        let x1  = self.point1.x;
+        let x2  = self.point2.x; 
+        let y1  = self.point1.y;
+        let y2  = self.point2.y; 
         
-        let min :char; 
-        let max :char; 
-        
-        if x == x1 {};
-        
-    
+        let mut min :i32 = x1; 
+        let mut max :i32 = x2; 
 
+        if x1 == x2 {   
+            if y1 > y2 {
+                min = y2; 
+                max = y1;
+            }else {
+                min = y1; 
+                max = y2; 
+            }
 
+            for y in min..=max {
+                image.display(x1, y, self.color());
+            }
+        }else {
+               //
+            if x1 > x2 {
+                min = x2; 
+                max = x1;
+            }
+
+            for x in min..=max {
+                let y = y1 + ((y2-y1)*(x-x1)) / (x2 - x1);
+                image.display(x, y, self.color());
+            }
+        }
+     
     }
     fn color(&self)-> Color{
-        Color::rgb(255, 192, 203)
+        Color::rgb(247, 246, 207)
     }
 }
