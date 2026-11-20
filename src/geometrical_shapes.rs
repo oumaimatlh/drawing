@@ -53,6 +53,7 @@ pub struct Line {
     pub point2: &Point,
 }
 
+//Insrance Line
 impl Line {
     pub fn new(p1: &Point, p2: &Point) -> Line {
         Line {
@@ -102,3 +103,39 @@ impl Drawable for Line {
         Color::rgb(247, 246, 207)
     }
 }
+
+//---------------//
+//Shape Triangle
+pub struct Triangle {
+    pub point1: &Point,
+    pub point2: &Point,
+    pub point3: &Point,
+}
+//Inst Triangle
+impl Triangle {
+    pub fn new(p1: &Point, p2: &Point, p3: &Point) -> Triangle {
+        Triangle {
+            point1: p1, //&Point
+            point2: p2, 
+            point3: p3,
+        }
+    }
+}
+//Draw triangle
+impl Drawable for Triangle {
+    fn draw(&self, image: &mut Image) {
+        let line1 = Line::new(self.point1, self.point2);
+        let line2 = Line::new(self.point2, self.point3);
+        let line3 = Line::new(self.point3, self.point1);
+
+        line1.draw(image);
+        line2.draw(image);
+        line3.draw(image);
+    }
+    fn color(&self) -> Color {
+        Color::rgb(0, 66, 123)
+    }
+}
+
+//-----------------------//
+
