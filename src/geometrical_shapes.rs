@@ -5,17 +5,8 @@ pub trait Drawable {
     fn draw(&self, image: &mut Image);
     fn color(&self) -> Color;
 }
-
 pub trait Displayable {
     fn display(&mut self, x: i32, y: i32, color: Color);
-}
-
-impl Displayable for Image {
-    fn display(&mut self, x: i32, y: i32, color: Color) {
-        if x >= 0 && x < self.width && y >= 0 && y < self.height {
-            self.set_pixel(x, y, color).unwrap();
-        }
-    }
 }
 
 //POint
@@ -24,7 +15,6 @@ pub struct Point {
     pub x: i32,
     pub y: i32,
 }
-
 impl Point {
     pub fn new(x: i32, y: i32) -> Point {
         Point { x, y }
@@ -37,7 +27,6 @@ impl Point {
         }
     }
 }
-
 impl Drawable for Point {
     fn draw(&self, image: &mut Image) {
         image.display(self.x, self.y, self.color());
@@ -53,8 +42,8 @@ pub struct Line {
     pub point1: Point,
     pub point2: Point,
 }
-
 impl Line {
+    #[allow(dead_code)]
     pub fn new(p1: &Point, p2: &Point) -> Line {
         Line {
             point1: *p1,
@@ -69,7 +58,6 @@ impl Line {
         }
     }
 }
-
 impl Drawable for Line {
     fn draw(&self, image: &mut Image) {
         let x1 = self.point1.x;
@@ -96,7 +84,7 @@ impl Drawable for Line {
     }
 
     fn color(&self) -> Color {
-        Color::rgb(247, 246, 207)
+        Color::rgb(250, 117, 0)
     }
 }
 
@@ -107,7 +95,6 @@ pub struct Triangle {
     pub point2: Point,
     pub point3: Point,
 }
-
 impl Triangle {
     pub fn new(p1: &Point, p2: &Point, p3: &Point) -> Triangle {
         Triangle {
@@ -117,7 +104,6 @@ impl Triangle {
         }
     }
 }
-
 impl Drawable for Triangle {
     fn draw(&self, image: &mut Image) {
         let points = [
@@ -155,7 +141,6 @@ pub struct Rectangle {
     pub point1: Point,
     pub point2: Point,
 }
-
 impl Rectangle {
     pub fn new(p1: &Point, p2: &Point) -> Rectangle {
         Rectangle {
@@ -164,7 +149,6 @@ impl Rectangle {
         }
     }
 }
-
 impl Drawable for Rectangle {
     fn draw(&self, image: &mut Image) {
         let min_x = self.point1.x.min(self.point2.x);
@@ -214,8 +198,8 @@ pub struct Circle {
     pub center: Point,
     pub radius: i32,
 }
-
 impl Circle {
+    #[allow(dead_code)]
     pub fn new(c: &Point, r: i32) -> Circle {
         Circle {
             center: *c,
@@ -235,7 +219,6 @@ impl Circle {
         }
     }
 }
-
 impl Drawable for Circle {
     fn draw(&self, image: &mut Image) {
         let xc = self.center.x;
