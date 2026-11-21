@@ -1,17 +1,14 @@
+
 use raster::{Color, Image};
-use rand::Rng;
 
-//Traits: 
 pub trait Drawable {
-    fn draw(&self, image:&mut Image);
-    fn color(&self) -> Color; 
+    fn draw(&self, image: &mut Image);
+    fn color(&self) -> Color;
 }
-
 
 pub trait Displayable {
-    fn display(&mut self, x:i32, y:i32, color:Color);
+    fn display(&mut self, x: i32, y: i32, color: Color);
 }
-
 
 impl Displayable for Image {
     fn display(&mut self, x: i32, y: i32, color: Color) {
@@ -21,151 +18,153 @@ impl Displayable for Image {
     }
 }
 
-//--------------------//
-
-//Shape Point: 
+//POint
+#[derive(Clone, Copy)]
 pub struct Point {
-    pub x: i32, //coordonnée horizontal 
-    pub y: i32, //coordonnée vertical 
+    pub x: i32,
+    pub y: i32,
 }
+
 impl Point {
-    pub fn new(x:i32, y:i32) -> Point {
-        Point {
-            x,
-            y
-        }
+    pub fn new(x: i32, y: i32) -> Point {
+        Point { x, y }
     }
+
     pub fn random(width: i32, height: i32) -> Point {
-        let mut rng = rand::thread_rng();
-        let x = rng.gen_range(0..width);
-        let y = rng.gen_range(0..height);
         Point {
-            x,
-            y,
+            x: rand::random_range(0..width),
+            y: rand::random_range(0..height),
         }
     }
 }
-//Draw Point : 
+
 impl Drawable for Point {
-    fn draw(&self, image:&mut Image) {
+    fn draw(&self, image: &mut Image) {
         image.display(self.x, self.y, self.color());
     }
-    fn color(&self)-> Color{
-        Color::rgb(255, 192, 203)
+
+    fn color(&self) -> Color {
+        Color::rgb(114, 253, 75)
     }
 }
 
-//--------------------//
-
-//Shape Line: 
+//Line
 pub struct Line {
-    pub point1: &Point,
-    pub point2: &Point,
+    pub point1: Point,
+    pub point2: Point,
 }
-//Insrance Line
+
 impl Line {
     pub fn new(p1: &Point, p2: &Point) -> Line {
         Line {
-            point1: p1,
-            point2: p2,
+            point1: *p1,
+            point2: *p2,
+        }
+    }
+
+    pub fn random(width: i32, height: i32) -> Line {
+        Line {
+            point1: Point::random(width, height),
+            point2: Point::random(width, height),
         }
     }
 }
-//Draw Line:
-impl Drawable for Line {
-    fn draw(&self, image:&mut Image) {
-        let x1  = self.point1.x;
-        let x2  = self.point2.x; 
-        let y1  = self.point1.y;
-        let y2  = self.point2.y; 
-        
-        let mut min :i32 = x1; 
-        let mut max :i32 = x2; 
 
-        if x1 == x2 {   
-            if y1 > y2 {
-                min = y2; 
-                max = y1;
-            }else {
-                min = y1; 
-                max = y2; 
-            }
+impl Drawable for Line {
+    fn draw(&self, image: &mut Image) {
+        let x1 = self.point1.x;
+        let x2 = self.point2.x;
+        let y1 = self.point1.y;
+        let y2 = self.point2.y;
+
+        if x1 == x2 {
+            let min = y1.min(y2);
+            let max = y1.max(y2);
 
             for y in min..=max {
                 image.display(x1, y, self.color());
             }
-        }else {
-               //
-            if x1 > x2 {
-                min = x2; 
-                max = x1;
-            }
+        } else {
+            let min = x1.min(x2);
+            let max = x1.max(x2);
 
             for x in min..=max {
-                let y = y1 + ((y2-y1)*(x-x1)) / (x2 - x1);
+                let y = y1 + ((y2 - y1) * (x - x1)) / (x2 - x1);
                 image.display(x, y, self.color());
             }
         }
-     
     }
-    fn color(&self)-> Color{
+
+    fn color(&self) -> Color {
         Color::rgb(247, 246, 207)
     }
 }
 
+// Triangle 
 
-
-//---------------//
-
-//Shape Triangle
 pub struct Triangle {
-    pub point1: &Point,
-    pub point2: &Point,
-    pub point3: &Point,
+    pub point1: Point,
+    pub point2: Point,
+    pub point3: Point,
 }
-//Inst Triangle
+
 impl Triangle {
     pub fn new(p1: &Point, p2: &Point, p3: &Point) -> Triangle {
         Triangle {
-            point1: p1, //&Point
-            point2: p2, 
-            point3: p3,
+            point1: *p1,
+            point2: *p2,
+            point3: *p3,
         }
     }
 }
-//Draw triangle
+
 impl Drawable for Triangle {
     fn draw(&self, image: &mut Image) {
-        let line1 = Line::new(self.point1, self.point2);
-        let line2 = Line::new(self.point2, self.point3);
-        let line3 = Line::new(self.point3, self.point1);
-        
-        line1.draw(image);
-        line2.draw(image);
-        line3.draw(image);
+        let points = [
+            (&self.point1, &self.point2),
+            (&self.point2, &self.point3),
+            (&self.point3, &self.point1),
+        ];
+
+        for (p1, p2) in points {
+            let x1 = p1.x;
+            let x2 = p2.x;
+            let y1 = p1.y;
+            let y2 = p2.y;
+
+            if x1 == x2 {
+                for y in y1.min(y2)..=y1.max(y2) {
+                    image.display(x1, y, self.color());
+                }
+            } else {
+                for x in x1.min(x2)..=x1.max(x2) {
+                    let y = y1 + ((y2 - y1) * (x - x1)) / (x2 - x1);
+                    image.display(x, y, self.color());
+                }
+            }
+        }
     }
+
     fn color(&self) -> Color {
-        Color::rgb(0, 66, 123)
+        Color::rgb(128, 196, 255)
     }
 }
 
-//-----------------------//
-
-//Shape Rectangle
+// Rectangle
 pub struct Rectangle {
-    pub point1: &Point,
-    pub point2: &Point,
+    pub point1: Point,
+    pub point2: Point,
 }
-//Inst Rectangle
+
 impl Rectangle {
     pub fn new(p1: &Point, p2: &Point) -> Rectangle {
         Rectangle {
-            point1: p1, 
-            point2: p2,
+            point1: *p1,
+            point2: *p2,
         }
     }
 }
-//Draw Rectangle
+
 impl Drawable for Rectangle {
     fn draw(&self, image: &mut Image) {
         let min_x = self.point1.x.min(self.point2.x);
@@ -179,57 +178,120 @@ impl Drawable for Rectangle {
         let p3 = Point::new(max_x, max_y);
         let p4 = Point::new(min_x, max_y);
 
-        Line::new(&p1, &p2).draw(image);
-        Line::new(&p2, &p3).draw(image);
-        Line::new(&p3, &p4).draw(image);
-        Line::new(&p4, &p1).draw(image);
-    }
-    fn color(&self) -> Color {
-        Color::rgb(123, 0, 0)
-    }
-}
+        let edges = [
+            (&p1, &p2),
+            (&p2, &p3),
+            (&p3, &p4),
+            (&p4, &p1),
+        ];
 
-//------------//
+        for (a, b) in edges {
+            let x1 = a.x;
+            let x2 = b.x;
+            let y1 = a.y;
+            let y2 = b.y;
 
-
-//Shape Cercle
-pub struct Cercle {
-    pub center: &Point,
-    pub radius: i32,
-}
-//Inst Cercle
-impl Cercle {
-    pub fn new(c: &Point, r: i32) -> Cercle {
-        Cercle {
-            center: c, 
-            point2: r,
-        }
-    }
-}
-//Draw Cercle
-impl Drawable for Cercle {
-    fn draw(&self, image: &mut Image) {
-    let xc = self.center.x;
-    let yc = self.center.y;
-    let r = self.radius;
-
-    let min_x = xc - r;
-    let max_x = xc + r;
-    let min_y = yc - r;
-    let max_y = yc + r;
-
-        for x in min_x..=max_x {
-            for y in min_y..=max_y {
-                let dx = x - xc;
-                let dy = y - yc;
-
-                if dx * dx + dy * dy == r * r {
+            if x1 == x2 {
+                for y in y1.min(y2)..=y1.max(y2) {
+                    image.display(x1, y, self.color());
+                }
+            } else {
+                for x in x1.min(x2)..=x1.max(x2) {
+                    let y = y1 + ((y2 - y1) * (x - x1)) / (x2 - x1);
                     image.display(x, y, self.color());
                 }
             }
         }
     }
+
     fn color(&self) -> Color {
-        Color::rgb(243, 66, 110)
+        Color::rgb(239, 255, 13)
+    }
+}
+
+//Circle
+pub struct Circle {
+    pub center: Point,
+    pub radius: i32,
+}
+
+impl Circle {
+    pub fn new(c: &Point, r: i32) -> Circle {
+        Circle {
+            center: *c,
+            radius: r,
+        }
+    }
+
+    pub fn random(width: i32, height: i32) -> Circle {
+        let center = Point::random(width, height);
+
+        let max_radius = (width.min(height) / 4).max(1);
+        let radius = rand::random_range(1..=max_radius);
+
+        Circle {
+            center,
+            radius,
+        }
+    }
+}
+
+impl Drawable for Circle {
+    fn draw(&self, image: &mut Image) {
+        let xc = self.center.x;
+        let yc = self.center.y;
+        let r = self.radius;
+
+        for x in (xc - r)..=(xc + r) {
+            for y in (yc - r)..=(yc + r) {
+                let dx = x - xc;
+                let dy = y - yc;
+
+                let distance = ((dx * dx + dy * dy) as f64).sqrt();
+
+                if (distance - r as f64).abs() <= 0.5 {
+                    image.display(x, y, self.color());
+                }
+            }
+        }
+    }
+
+    fn color(&self) -> Color {
+        Color::rgb(255, 196, 221)
+
+    }
+}
+
+
+//Units-test :
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_point_random() {
+        let point = Point::random(1000, 1000);
+
+        assert!(point.x >= 0 && point.x < 1000);
+        assert!(point.y >= 0 && point.y < 1000);
+    }
+
+    #[test]
+    fn test_line_random() {
+        let line = Line::random(1000, 1000);
+
+        assert!(line.point1.x >= 0 && line.point1.x < 1000);
+        assert!(line.point1.y >= 0 && line.point1.y < 1000);
+
+        assert!(line.point2.x >= 0 && line.point2.x < 1000);
+        assert!(line.point2.y >= 0 && line.point2.y < 1000);
+    }
+
+    #[test]
+    fn test_circle_random() {
+        let circle = Circle::random(1000, 1000);
+
+        assert!(circle.center.x >= 0 && circle.center.x < 1000);
+        assert!(circle.center.y >= 0 && circle.center.y < 1000);
     }
 }
