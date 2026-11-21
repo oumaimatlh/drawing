@@ -1,12 +1,12 @@
 
-use super::*;
-
 // Triangle 
+use super::*;
 
 pub struct Triangle {
     pub point1: Point,
     pub point2: Point,
     pub point3: Point,
+    color: (u8, u8, u8),
 }
 impl Triangle {
     pub fn new(p1: &Point, p2: &Point, p3: &Point) -> Triangle {
@@ -14,6 +14,7 @@ impl Triangle {
             point1: *p1,
             point2: *p2,
             point3: *p3,
+            color: super::random_color(),
         }
     }
 }
@@ -45,6 +46,6 @@ impl Drawable for Triangle {
     }
 
     fn color(&self) -> Color {
-        Color::rgb(128, 196, 255)
+        Color::rgb(self.color.0, self.color.1, self.color.2)
     }
 }

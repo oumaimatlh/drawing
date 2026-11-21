@@ -1,15 +1,17 @@
+// Rectangle
 use super::*;
 
-// Rectangle
 pub struct Rectangle {
     pub point1: Point,
     pub point2: Point,
+    color: (u8, u8, u8),
 }
 impl Rectangle {
     pub fn new(p1: &Point, p2: &Point) -> Rectangle {
         Rectangle {
             point1: *p1,
             point2: *p2,
+            color: super::random_color(),
         }
     }
 }
@@ -53,6 +55,6 @@ impl Drawable for Rectangle {
     }
 
     fn color(&self) -> Color {
-        Color::rgb(239, 255, 13)
+        Color::rgb(self.color.0, self.color.1, self.color.2)
     }
 }

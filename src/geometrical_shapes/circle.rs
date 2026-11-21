@@ -5,6 +5,7 @@ use super::*;
 pub struct Circle {
     pub center: Point,
     pub radius: i32,
+    color: (u8, u8, u8),
 }
 impl Circle {
     #[allow(dead_code)]
@@ -12,6 +13,7 @@ impl Circle {
         Circle {
             center: *c,
             radius: r,
+            color: super::random_color(),
         }
     }
 
@@ -24,10 +26,12 @@ impl Circle {
         Circle {
             center,
             radius,
+            color: super::random_color(),
         }
     }
 }
 impl Drawable for Circle {
+
     fn draw(&self, image: &mut Image) {
         let xc = self.center.x;
         let yc = self.center.y;
@@ -48,7 +52,20 @@ impl Drawable for Circle {
     }
 
     fn color(&self) -> Color {
-        Color::rgb(255, 196, 221)
+        Color::rgb(self.color.0, self.color.1, self.color.2)
+    }
+}
 
+//Units-test :
+#[cfg(test)]
+mod tests {
+    use super::super::*;
+
+    #[test]
+    fn test_circle_random() {
+        let circle = Circle::random(1000, 1000);
+
+        assert!(circle.center.x >= 0 && circle.center.x < 1000);
+        assert!(circle.center.y >= 0 && circle.center.y < 1000);
     }
 }

@@ -22,7 +22,7 @@ fn main() {
     triangle.draw(&mut image);
 
     for _ in 1..50 {
-        gs::Circle::random(image.width, image.height).draw(&mut image);
+        gs::Line::random(image.width, image.height).draw(&mut image);
     }
 
     raster::save(&image, "image.png").unwrap();
