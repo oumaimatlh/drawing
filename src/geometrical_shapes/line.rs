@@ -4,7 +4,7 @@ use super::*;
 pub struct Line {
     pub point1: Point,
     pub point2: Point,
-    color: (u8, u8, u8),
+    pub color: (u8, u8, u8),
 }
 impl Line {
     #[allow(dead_code)]
@@ -60,8 +60,8 @@ impl Drawable for Line {
                     let x = x1 + ((x2 - x1) * (y - y1)) / (y2 - y1);
                     image.display(x, y, self.color());
                 }
-    }
-}
+            }
+        }
     }
 
     fn color(&self) -> Color {

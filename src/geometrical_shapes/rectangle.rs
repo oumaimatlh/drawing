@@ -15,6 +15,8 @@ impl Rectangle {
         }
     }
 }
+
+//Draw Rectangle
 impl Drawable for Rectangle {
     fn draw(&self, image: &mut Image) {
         let min_x = self.point1.x.min(self.point2.x);
@@ -28,33 +30,22 @@ impl Drawable for Rectangle {
         let p3 = Point::new(max_x, max_y);
         let p4 = Point::new(min_x, max_y);
 
-        let edges = [
-            (&p1, &p2),
-            (&p2, &p3),
-            (&p3, &p4),
-            (&p4, &p1),
-        ];
+        let mut line1 = Line::new(&p1, &p2);
+        let mut line2 = Line::new(&p2, &p3);
+        let mut line3 = Line::new(&p3, &p4);
+        let mut line4 = Line::new(&p4, &p1);
 
-        for (a, b) in edges {
-            let x1 = a.x;
-            let x2 = b.x;
-            let y1 = a.y;
-            let y2 = b.y;
+        line1.color = self.color;
+        line2.color = self.color;
+        line3.color = self.color;
+        line4.color = self.color;
 
-            if x1 == x2 {
-                for y in y1.min(y2)..=y1.max(y2) {
-                    image.display(x1, y, self.color());
-                }
-            } else {
-                for x in x1.min(x2)..=x1.max(x2) {
-                    let y = y1 + ((y2 - y1) * (x - x1)) / (x2 - x1);
-                    image.display(x, y, self.color());
-                }
-            }
-        }
+        line1.draw(image);
+        line2.draw(image);
+        line3.draw(image);
+        line4.draw(image);
     }
-
-    fn color(&self) -> Color {
+     fn color(&self) -> Color {
         Color::rgb(self.color.0, self.color.1, self.color.2)
     }
 }

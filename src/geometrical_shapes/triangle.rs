@@ -1,5 +1,4 @@
-
-// Triangle 
+// Triangle
 use super::*;
 
 pub struct Triangle {
@@ -8,6 +7,7 @@ pub struct Triangle {
     pub point3: Point,
     color: (u8, u8, u8),
 }
+
 impl Triangle {
     pub fn new(p1: &Point, p2: &Point, p3: &Point) -> Triangle {
         Triangle {
@@ -18,31 +18,20 @@ impl Triangle {
         }
     }
 }
+
 impl Drawable for Triangle {
     fn draw(&self, image: &mut Image) {
-        let points = [
-            (&self.point1, &self.point2),
-            (&self.point2, &self.point3),
-            (&self.point3, &self.point1),
-        ];
+        let mut line1 = Line::new(&self.point1, &self.point2);
+        let mut line2 = Line::new(&self.point2, &self.point3);
+        let mut line3 = Line::new(&self.point3, &self.point1);
 
-        for (p1, p2) in points {
-            let x1 = p1.x;
-            let x2 = p2.x;
-            let y1 = p1.y;
-            let y2 = p2.y;
+        line1.color = self.color;
+        line2.color = self.color;
+        line3.color = self.color;
 
-            if x1 == x2 {
-                for y in y1.min(y2)..=y1.max(y2) {
-                    image.display(x1, y, self.color());
-                }
-            } else {
-                for x in x1.min(x2)..=x1.max(x2) {
-                    let y = y1 + ((y2 - y1) * (x - x1)) / (x2 - x1);
-                    image.display(x, y, self.color());
-                }
-            }
-        }
+        line1.draw(image);
+        line2.draw(image);
+        line3.draw(image);
     }
 
     fn color(&self) -> Color {
